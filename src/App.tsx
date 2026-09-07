@@ -80,7 +80,7 @@ function App() {
             <span>⌂</span> Overview
           </button>
           <button className={route.categoryId === 'backend-tools' ? 'nav-link active' : 'nav-link'} onClick={() => navigateCategory('backend-tools')} type="button">
-            <span>◈</span> Backend tools
+            <span>◈</span> Event streaming
           </button>
           <button className={route.categoryId === 'system-design' ? 'nav-link active' : 'nav-link'} onClick={() => navigateCategory('system-design')} type="button">
             <span>⊞</span> System design
@@ -195,7 +195,7 @@ function HomePage({ onOpenSubject, onSearch, query, subjects: visibleSubjects }:
 function CategoryDirectory({ onOpenSubject }: { onOpenSubject: (subject: Subject) => void }) {
   return (
     <section className="category-directory">
-      <div className="section-heading"><span>Browse by category</span><small>9 areas · 2 subjects each</small></div>
+      <div className="section-heading"><span>Browse by category</span><small>{categories.length} areas · {subjects.length} subjects</small></div>
       <div className="category-directory-list">
         {categories.map((category, index) => {
           const categorySubjects = subjectsForCategory(category.id)
@@ -279,7 +279,7 @@ function SubjectPage({ onNavigateCategory, onOpenSubject, subject }: { onNavigat
           <h1>{subject.title}</h1>
           <p className="subject-summary">{subject.summary}</p>
         </div>
-        <div className="subject-facts"><span><strong>{subject.minutes}</strong> min read</span><span><strong>Java</strong> {subject.level}</span></div>
+        <div className="subject-facts"><span><strong>{subject.minutes}</strong> min read</span><span><strong>{subject.domain ?? 'Java'}</strong> {subject.level}</span></div>
       </header>
 
       <div className="tag-row">{subject.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div>
@@ -287,8 +287,9 @@ function SubjectPage({ onNavigateCategory, onOpenSubject, subject }: { onNavigat
       <div className="article-layout">
         <div className="article-main">
           <aside className="takeaway" id="core-idea"><span>Core idea</span><strong>{subject.takeaway}</strong></aside>
+          {(subject.images ?? (subject.image ? [subject.image] : [])).map((image) => <figure className="subject-image" key={image.src}><img alt={image.alt} src={image.src} /><figcaption>{image.caption}</figcaption></figure>)}
           {subject.diagram && <Diagram items={subject.diagram} />}
-          <CodeBlock label={subject.codeLabel} note={subject.codeNote} code={subject.code} />
+          <CodeBlock language={subject.codeLanguage} label={subject.codeLabel} note={subject.codeNote} code={subject.code} />
           {subject.sections.map((section) => (
             <section className="article-section" id={section.heading.toLowerCase().replaceAll(' ', '-')} key={section.heading}>
               <h2>{section.heading}</h2>
@@ -296,9 +297,10 @@ function SubjectPage({ onNavigateCategory, onOpenSubject, subject }: { onNavigat
               {section.bullets && <ul>{section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>}
             </section>
           ))}
+          {subject.links && <section className="article-section" id="further-investigation"><h2>Further investigation</h2><ul className="resource-list">{subject.links.map((link) => <li key={link.url}><a href={link.url} rel="noreferrer" target="_blank">{link.label}<small>↗</small></a></li>)}</ul></section>}
         </div>
         <aside className="article-aside">
-          <div className="aside-block"><span className="aside-label">On this page</span><a href="#core-idea">Core idea</a><a href="#example">Minimal example</a>{subject.sections.map((section) => <a href={`#${section.heading.toLowerCase().replaceAll(' ', '-')}`} key={section.heading}>{section.heading}</a>)}</div>
+          <div className="aside-block"><span className="aside-label">On this page</span><a href="#core-idea">Core idea</a><a href="#example">Minimal example</a>{subject.sections.map((section) => <a href={`#${section.heading.toLowerCase().replaceAll(' ', '-')}`} key={section.heading}>{section.heading}</a>)}{subject.links && <a href="#further-investigation">Further investigation</a>}</div>
           <div className="aside-block related-block"><span className="aside-label">Keep going</span>{relatedSubjects.map((related) => <button key={related.slug} onClick={() => onOpenSubject(related)} type="button"><span>{related.title}</span><small>↗</small></button>)}</div>
         </aside>
       </div>
@@ -314,14 +316,14 @@ function Diagram({ items }: { items: string[] }) {
   return <div className="diagram" aria-label="Concept flow">{items.map((item, index) => <span className="diagram-step" key={item}><b>{String(index + 1).padStart(2, '0')}</b>{item}{index < items.length - 1 && <i>→</i>}</span>)}</div>
 }
 
-function CodeBlock({ code, label, note }: { code: string; label: string; note: string }) {
+function CodeBlock({ code, label, language, note }: { code: string; label: string; language?: string; note: string }) {
   const copyCode = async () => {
     await navigator.clipboard?.writeText(code)
   }
   return (
     <section className="code-section" id="example">
       <div className="code-heading"><span>Minimal example</span><button onClick={copyCode} type="button">Copy code</button></div>
-      <div className="code-frame"><div className="code-bar"><span className="code-dots"><i /><i /><i /></span><span>{label}</span><span>Java 21</span></div><pre><code>{code}</code></pre></div>
+      <div className="code-frame"><div className="code-bar"><span className="code-dots"><i /><i /><i /></span><span>{label}</span><span>{language ?? 'Java 21'}</span></div><pre><code>{code}</code></pre></div>
       <p className="code-note">{note}</p>
     </section>
   )

@@ -1,18 +1,23 @@
 # Java Atlas
 
-A practical field guide to Java concepts, design patterns, data structures, algorithms, concurrency, backend tools, testing, and system design.
+A practical field guide to Java concepts, design patterns, data structures, algorithms, concurrency, backend tools, Kubernetes, testing, and system design.
 
-The first slice contains two subjects per category so the layout and content model can be evaluated before the catalog grows.
+The catalog is organized as a set of practical neighborhoods, with each subject kept to a focused 1–2 page read and linked to primary documentation for deeper investigation.
 
 ## Included in the first slice
 
 - Java runtime: equals/hashCode, Java Memory Model
-- Design patterns: Rule Engine, Singleton
+- Design patterns: Rule Engine, Singleton, Strategy, Factory Method, Builder, Decorator, Chain of Responsibility
+- Kubernetes: components, object catalog, workloads, Service and networking, PV/PVC/StorageClass, config/RBAC, YAML, and Helm templates
+- Containers, Git & architecture: Docker/Kubernetes map, Docker components, lifecycle, layers, registries, Git clone/fork, metadata lifecycle, service architecture, asset/fund modeling
 - Collections and caching: LRU Cache, LFU Cache
 - Data structures: Tree Traversal, Binary Search Tree
 - Algorithms: Binary Search, Sliding Window
-- Concurrency: CompletableFuture, Race Condition
-- Backend tools: Kafka, Redis
+- Concurrency & async: CompletableFuture, Race Condition, Virtual Threads, Reactor, Vert.x
+- Event streaming: Kafka, Apache Pulsar, Apache Flink
+- Data services & OLAP: Redis, Aerospike, ClickHouse, Apache Pinot
+- Edge delivery: Cloudflare Anycast CDN
+- Lakehouse & formats: Apache Iceberg, Apache Parquet
 - Testing and engineering: JUnit, Testcontainers
 - System design: Rate Limiter, Circuit Breaker
 
@@ -25,7 +30,7 @@ npm install
 npm run dev
 ```
 
-Open the URL printed by Vite. Subject pages use hash URLs so the first slice stays dependency-light:
+Open the URL printed by Vite. Subject pages use hash URLs so the site stays dependency-light:
 
 ```text
 /#rule-engine
@@ -52,8 +57,11 @@ src/
 
 docs/
 └── LOCAL-INFRASTRUCTURE.md   Future local Kafka/Redis/database lab design
+
+public/doc-images/
+└── image1.png ... image13.png  Extracted diagrams from the uploaded look4.docx reference
 ```
 
 ## Direction
 
-This is content-first. The next iteration should refine the visual language and page template based on the first slice. The local infrastructure lab is designed separately and is not connected to the public site yet.
+This is content-first. Each page follows the same mental model, minimal example, tradeoffs, and further-investigation links. The local infrastructure lab is designed separately and is not connected to the public site yet.

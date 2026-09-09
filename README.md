@@ -7,6 +7,9 @@ The catalog is organized as a set of practical neighborhoods, with each subject 
 ## Included in the first slice
 
 - Java runtime: equals/hashCode, Java Memory Model
+- JVM internals & GC: class loading, JIT compilation, heap behavior, garbage collection, and production diagnosis
+- Streams & modern Java: stream pipelines, records, Optional, and modern API tradeoffs
+- Exceptions & error handling: checked and unchecked failures, resource cleanup, causes, and retry boundaries
 - Design patterns: Rule Engine, Singleton, Strategy, Factory Method, Builder, Decorator, Chain of Responsibility
 - Kubernetes: components, object catalog, workloads, Service and networking, PV/PVC/StorageClass, config/RBAC, YAML, and Helm templates
 - Containers, Git & architecture: Docker/Kubernetes map, Docker components, lifecycle, layers, registries, Git clone/fork, metadata lifecycle, service architecture, asset/fund modeling
@@ -20,8 +23,9 @@ The catalog is organized as a set of practical neighborhoods, with each subject 
 - Lakehouse & formats: Apache Iceberg, Apache Parquet
 - Testing and engineering: JUnit, Testcontainers
 - System design: Rate Limiter, Circuit Breaker
+- REST clients: JDK HttpClient, Spring RestClient, WebClient, JAX-RS/MicroProfile, OpenFeign, OkHttp, Retrofit, Apache HttpClient, and Vert.x Web Client
 
-The intentionally excluded Java basics are classes and objects, interfaces, abstract classes, records, enums, generics, exceptions, and immutability.
+The intentionally excluded Java basics are classes and objects, interfaces, abstract classes, records, enums, and immutability.
 
 ## Local development
 

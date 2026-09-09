@@ -1,8 +1,19 @@
 import { useEffect, useMemo, useState } from 'react'
 import { categories, findSubject, subjects, subjectsForCategory, type Subject } from './data'
+import { quizSubjectSlugs } from './quizQuestionIndex'
 import './styles.css'
 
 type Route = { slug: string | null; categoryId: string | null }
+
+const quizBaseUrl = import.meta.env.VITE_QUIZ_URL ?? 'https://relrtl-hub.github.io/java-expert-quiz/'
+
+function quizHref(subjectSlug?: string, retrieveQuestion = false) {
+  const url = new URL(quizBaseUrl, window.location.origin)
+  if (subjectSlug) url.searchParams.set('subject', subjectSlug)
+  if (retrieveQuestion) url.searchParams.set('question', 'one')
+  url.searchParams.set('return', window.location.href)
+  return url.toString()
+}
 
 function readRoute(): Route {
   const hash = window.location.hash.replace(/^#\/?/, '')
@@ -61,7 +72,10 @@ function App() {
           <span className="brand-mark">J</span>
           <span>Java Atlas</span>
         </button>
-        <span className="mobile-count">{subjects.length} subjects</span>
+        <span className="mobile-actions">
+          <a className="mobile-quiz-link" href={quizHref()} rel="noreferrer" target="_blank">Quiz ↗</a>
+          <span className="mobile-count">{subjects.length} subjects</span>
+        </span>
       </header>
 
       <aside className="sidebar">
@@ -86,6 +100,11 @@ function App() {
             <span>⊞</span> System design
           </button>
         </nav>
+
+        <a className="quiz-cta" href={quizHref()} rel="noreferrer" target="_blank">
+          <span><strong>Take the quiz</strong><small>Interview practice for the atlas</small></span>
+          <span>↗</span>
+        </a>
 
         <p className="nav-label category-label">Categories</p>
         <nav className="category-nav" aria-label="Subject categories">
@@ -141,6 +160,7 @@ function HomePage({ onOpenSubject, onSearch, query, subjects: visibleSubjects }:
           <p className="eyebrow">A working reference for Java engineers</p>
           <h1>Understand the shape of the thing.</h1>
           <p className="hero-summary">Short explanations, minimal Java, and the tradeoffs that tutorials usually hide in footnotes.</p>
+          <a className="home-quiz-cta" href={quizHref()} rel="noreferrer" target="_blank">Take the Java quiz <span>↗</span></a>
         </div>
         <div className="hero-stamp">
           <span>01</span>
@@ -280,6 +300,10 @@ function SubjectPage({ onNavigateCategory, onOpenSubject, subject }: { onNavigat
           <p className="subject-summary">{subject.summary}</p>
         </div>
         <div className="subject-facts"><span><strong>{subject.minutes}</strong> min read</span><span><strong>{subject.domain ?? 'Java'}</strong> {subject.level}</span></div>
+        <div className="subject-actions">
+          <a className="subject-quiz-cta" href={quizHref(subject.slug)} rel="noreferrer" target="_blank">Quiz this subject <span>↗</span></a>
+          {quizSubjectSlugs.has(subject.slug) ? <a className="subject-question-cta" href={quizHref(subject.slug, true)} rel="noreferrer" target="_blank">Get a question <span>↗</span></a> : <span className="subject-question-empty">No questions yet for this subject.</span>}
+        </div>
       </header>
 
       <div className="tag-row">{subject.tags.map((tag) => <span key={tag}>#{tag}</span>)}</div>
@@ -295,6 +319,15 @@ function SubjectPage({ onNavigateCategory, onOpenSubject, subject }: { onNavigat
               <h2>{section.heading}</h2>
               {section.paragraphs?.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
               {section.bullets && <ul>{section.bullets.map((bullet) => <li key={bullet}>{bullet}</li>)}</ul>}
+              {section.tables?.map((table, tableIndex) => (
+                <div className="table-scroll" key={`${section.heading}-table-${tableIndex}`}>
+                  <table>
+                    {table.caption && <caption>{table.caption}</caption>}
+                    <thead><tr>{table.columns.map((column) => <th key={column} scope="col">{column}</th>)}</tr></thead>
+                    <tbody>{table.rows.map((row, rowIndex) => <tr key={`${section.heading}-row-${rowIndex}`}>{row.map((cell, cellIndex) => cellIndex === 0 ? <th key={`${rowIndex}-${cellIndex}`} scope="row">{cell}</th> : <td key={`${rowIndex}-${cellIndex}`}>{cell}</td>)}</tr>)}</tbody>
+                  </table>
+                </div>
+              ))}
             </section>
           ))}
           {subject.links && <section className="article-section" id="further-investigation"><h2>Further investigation</h2><ul className="resource-list">{subject.links.map((link) => <li key={link.url}><a href={link.url} rel="noreferrer" target="_blank">{link.label}<small>↗</small></a></li>)}</ul></section>}
